@@ -19,6 +19,8 @@ public class Post extends BaseEntity {
 
     private String title;
     private String content;
+
+    @Enumerated
     private PostType postType;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,5 +1,6 @@
 package capstone.skini.domain.comment.entity;
 
+import capstone.skini.domain.common.BaseEntity;
 import capstone.skini.domain.post.entity.Post;
 import capstone.skini.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -11,7 +12,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
