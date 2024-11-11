@@ -32,14 +32,7 @@ public class UserController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
 
-        Cookie[] cookies = request.getCookies();
-        String refresh = null;
-
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
-            }
-        }
+        String refresh = request.getHeader("refresh");
 
         if (refresh == null) {
             return ResponseEntity.badRequest().body("refresh Token 이 없습니다.");
@@ -58,11 +51,6 @@ public class UserController {
         }
 
         refreshTokenService.deleteRefreshToken(refresh);
-
-        Cookie cookie = new Cookie("refresh", null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok("로그아웃 성공");
     }
 }

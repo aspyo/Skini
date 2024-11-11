@@ -25,14 +25,7 @@ public class RefreshTokenController {
      */
     @GetMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        String refresh = null;
-
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
-            }
-        }
+        String refresh = request.getHeader("refresh");
 
         if (refresh == null) {
             return ResponseEntity.badRequest().body("refresh Token 이 없습니다.");

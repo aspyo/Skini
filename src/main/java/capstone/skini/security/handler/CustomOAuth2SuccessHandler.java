@@ -45,21 +45,12 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         //응답 설정
         response.setHeader("jwt", jwt);
-        response.addCookie(createCookie("refresh", refresh));
+        response.setHeader("refresh", refresh);
         response.sendRedirect("http://localhost:8080/");
 
         System.out.println("refresh = " + refresh);
         System.out.println("jwt = " + jwt);
         System.out.println("성공!!");
-    }
-
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60 * 24 * 7);
-        cookie.setHttpOnly(true);
-
-        return cookie;
-
     }
 
     private void addRefreshToken(String username, String refresh, long expiredMs) {
