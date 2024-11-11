@@ -41,7 +41,7 @@ public class UserService {
                 .email(joinDto.getEmail())
                 .gender(joinDto.getGender())
                 .role("ROLE_USER")
-                .loginType(LoginType.SOCIAL)
+                .loginType(LoginType.OUR)
                 .build();
 
         User savedUser = userRepository.save(newUser);

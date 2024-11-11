@@ -33,6 +33,10 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category",String.class);
     }
 
+    public String getLoginType(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("loginType",String.class);
+    }
+
     public boolean isExpired(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
@@ -40,8 +44,6 @@ public class JWTUtil {
     public boolean isOAuth2(String token) {
         String loginType = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("loginType", String.class);
         return loginType.equals("SOCIAL") ? true : false;
-
-
     }
 
     public String createJwt(String category, String username, String role, LoginType loginType, Long expiredMs) {

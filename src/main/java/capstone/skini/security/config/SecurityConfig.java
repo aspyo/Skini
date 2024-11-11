@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
                         .requestMatchers("/", "/error").permitAll()
-                        .requestMatchers("/api/login", "/api/join", "/api/reissue").permitAll()
+                        .requestMatchers("/api/login", "/api/join", "/api/reissue", "/api/oauth2token").permitAll()
                         .anyRequest().authenticated());
 
         http

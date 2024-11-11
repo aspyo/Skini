@@ -2,7 +2,9 @@ package capstone.skini.domain.refresh.service;
 
 import capstone.skini.domain.refresh.entity.RefreshToken;
 import capstone.skini.domain.refresh.repository.RefreshTokenRepository;
+import capstone.skini.security.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,4 +29,5 @@ public class RefreshTokenService {
     public boolean existRefreshToken(String refreshToken) {
         return refreshTokenRepository.existsByRefreshToken(refreshToken);
     }
+
 }

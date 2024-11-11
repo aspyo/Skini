@@ -79,15 +79,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(HttpStatus.OK.value());
     }
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60 * 24 * 7);
-        cookie.setHttpOnly(true);
-
-        return cookie;
-
-    }
-
     private void addRefreshToken(String username, String refresh, long expiredMs) {
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 

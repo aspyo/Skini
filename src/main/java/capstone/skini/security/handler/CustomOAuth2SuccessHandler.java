@@ -26,6 +26,11 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
     private final JWTUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    /**
+     * 소셜로그인 성공시 refresh 토큰만 쿠키값으로 설정하여 클라이언트에게 특정 url로 리다이렉트하여 전달
+     * 클라이언트는 해당 페이지에서 useEffect로 백엔드의 /api/oauth2token 으로 get요청
+     * 이후 백엔드의 /api/oauth2token 컨트롤러에서 refresh 토큰 검증후 jwt토큰과 refresh 토큰 생성 및 응답헤더로 전달
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
@@ -34,34 +39,30 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         Iterator<? extends GrantedAuthority> iterator = authentication.getAuthorities().iterator();
         String role = iterator.next().getAuthority();
 
-        // JWT 토큰 생성(유효기간 = 1시간)
-        String jwt = jwtUtil.createJwt("access", username, role, LoginType.SOCIAL, 1000 * 60 * 60L);
-
         // Refresh 토큰 생성(유효기간 = 7일)
         String refresh = jwtUtil.createJwt("refresh", username, role, LoginType.SOCIAL, 1000 * 60 * 60 * 24 * 7L);
 
-        //Refresh 토큰 저장
-        addRefreshToken(username, refresh,86400000L);
-
         //응답 설정
-        response.setHeader("jwt", jwt);
-        response.setHeader("refresh", refresh);
-        response.sendRedirect("http://localhost:8080/");
+        response.addCookie(createCookie("refresh", refresh));
+
+        /**
+         * 나중에 리다이렉션 url 클라이언트 페이지로 수정해야함!!
+         */
+        //이후 클라이언트의 특정 url로 리다이렉션 ex) http://localhost:3000/token
+        //클라이언트에선 해당 페이지에서 useEffect 같은 함수로 백엔드의 특정 url로 요청
+        //그러면 서버에서 jwt, refresh 토큰 발급후 응답헤더로 전달 -> 클라이언트에서 로컬스토리지에 저장하여 사용
+        response.sendRedirect("http://localhost:8080/api/oauth2token");
 
         System.out.println("refresh = " + refresh);
-        System.out.println("jwt = " + jwt);
         System.out.println("성공!!");
     }
 
-    private void addRefreshToken(String username, String refresh, long expiredMs) {
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(60 * 3);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
 
-        RefreshToken refreshToken = RefreshToken.builder()
-                .username(username)
-                .refreshToken(refresh)
-                .expiration(date.toString())
-                .build();
-
-        refreshTokenRepository.save(refreshToken);
+        return cookie;
     }
 }

@@ -27,6 +27,10 @@ public class CustomOAuth2User implements CustomPrincipal{
         return oAuth2UserDto.getName();
     }
 
+    public String getLoginType() {
+        return oAuth2UserDto.getLoginType();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
