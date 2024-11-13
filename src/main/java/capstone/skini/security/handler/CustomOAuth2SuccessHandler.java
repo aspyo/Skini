@@ -53,8 +53,6 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         //그러면 서버에서 jwt, refresh 토큰 발급후 응답헤더로 전달 -> 클라이언트에서 로컬스토리지에 저장하여 사용
         response.sendRedirect("http://localhost:8080/api/oauth2token");
 
-        System.out.println("refresh = " + refresh);
-        System.out.println("성공!!");
     }
 
     private Cookie createCookie(String key, String value) {

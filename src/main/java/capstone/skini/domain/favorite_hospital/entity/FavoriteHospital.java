@@ -19,13 +19,14 @@ public class FavoriteHospital extends BaseEntity {
     @Column(name = "favorite_hospital_id")
     private Long id;
 
+    private String hospitalName;
+    private String address;
+    private String point;
+    private String phoneNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
 
     protected FavoriteHospital() {
 
