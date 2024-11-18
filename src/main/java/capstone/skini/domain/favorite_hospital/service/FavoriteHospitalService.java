@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -19,6 +22,16 @@ public class FavoriteHospitalService {
 
     private final FavoriteHospitalRepository favoriteHospitalRepository;
     private final UserService userService;
+
+    public ResponseEntity<?> findFavorites(String loginId) {
+        User findUser = userService.findByLoginId(loginId);
+        if (findUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cannot find User By loginId : " + loginId);
+        }
+        List<FavoriteHospital> allByUser = favoriteHospitalRepository.findAllByUser(findUser);
+        List<HospitalDto> hospitalDtos = allByUser.stream().map(h -> new HospitalDto(h)).collect(Collectors.toList());
+        return ResponseEntity.ok(hospitalDtos);
+    }
 
     public ResponseEntity<?> addFavorites(HospitalDto hospitalDto, String loginId) {
         User findUser = userService.findByLoginId(loginId);
@@ -48,5 +61,4 @@ public class FavoriteHospitalService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
 }

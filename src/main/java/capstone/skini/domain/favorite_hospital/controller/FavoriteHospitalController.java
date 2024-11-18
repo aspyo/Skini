@@ -17,6 +17,12 @@ public class FavoriteHospitalController {
 
     private final FavoriteHospitalService favoriteHospitalService;
 
+    @GetMapping("/favorites/hospital")
+    public ResponseEntity<?> findFavoritesHospital(@AuthenticationPrincipal CustomPrincipal principal) {
+        String loginId = principal.getLoginId();
+        return favoriteHospitalService.findFavorites(loginId);
+    }
+
     @PostMapping("/favorites/hospital")
     public ResponseEntity<?> addFavoritesHospital(@AuthenticationPrincipal CustomPrincipal principal,
                                                   @RequestBody HospitalDto hospitalDto) {
@@ -28,4 +34,5 @@ public class FavoriteHospitalController {
     public ResponseEntity<?> deleteFavoritesHospital(@PathVariable("id") Long id) {
         return favoriteHospitalService.deleteFavorites(id);
     }
+
 }

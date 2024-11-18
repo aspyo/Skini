@@ -16,7 +16,7 @@ public class UserDto {
     private String email;
     private Integer age;
     private Gender gender;
-    private String location;
+    private String address;
 
     public UserDto(User user) {
         username = user.getUsername();
@@ -24,7 +24,7 @@ public class UserDto {
         email = user.getEmail();
         age = user.getAge();
         gender = user.getGender();
-        location = user.getLocation();
+        address = user.getAddress();
     }
 
 }
