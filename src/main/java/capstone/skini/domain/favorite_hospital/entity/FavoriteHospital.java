@@ -21,7 +21,8 @@ public class FavoriteHospital extends BaseEntity {
 
     private String hospitalName;
     private String address;
-    private String point;
+    private Double latitude;
+    private Double longitude;
     private String phoneNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)

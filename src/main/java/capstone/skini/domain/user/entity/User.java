@@ -30,7 +30,7 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
-    private String location;
+    private String address;
 
     protected User() {
 

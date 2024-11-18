@@ -67,6 +67,11 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public User findByLoginId(String loginId) {
+        return userRepository.findUserByLoginId(loginId);
+    }
+
     public ResponseEntity<?> deleteUser(Long id) {
         try{
             User findUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cannot find User By Id : " + id));
