@@ -18,7 +18,7 @@ public class Diagnosis extends BaseEntity {
     @Column(name = "diagnosis_id")
     private Long id;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private DiagnosisType diagnosisType;
 
     private String result;

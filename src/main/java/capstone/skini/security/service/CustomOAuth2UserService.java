@@ -1,5 +1,6 @@
 package capstone.skini.security.service;
 
+import capstone.skini.domain.user.entity.LoginType;
 import capstone.skini.domain.user.entity.User;
 import capstone.skini.domain.user.repository.UserRepository;
 import capstone.skini.security.dto.OAuth2UserDto;
@@ -47,6 +48,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .username(oAuth2Response.getName())
                     .email(oAuth2Response.getEmail())
                     .loginId(socialId)
+                    .role("ROLE_USER")
+                    .loginType(LoginType.SOCIAL)
                     .build();
             userRepository.save(newUser);
 

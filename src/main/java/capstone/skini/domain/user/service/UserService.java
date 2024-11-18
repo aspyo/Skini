@@ -1,11 +1,15 @@
 package capstone.skini.domain.user.service;
 
 import capstone.skini.domain.user.dto.JoinDto;
+import capstone.skini.domain.user.dto.UserDto;
 import capstone.skini.domain.user.entity.LoginType;
 import capstone.skini.domain.user.entity.User;
 import capstone.skini.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -41,7 +45,7 @@ public class UserService {
                 .email(joinDto.getEmail())
                 .gender(joinDto.getGender())
                 .role("ROLE_USER")
-                .loginType(LoginType.SOCIAL)
+                .loginType(LoginType.OUR)
                 .build();
 
         User savedUser = userRepository.save(newUser);
@@ -51,6 +55,31 @@ public class UserService {
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findUserByUsername(username);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> findById(Long id) {
+        try {
+            User findUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cannot find User By Id : " + id));
+            return ResponseEntity.ok(new UserDto(findUser));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public User findByLoginId(String loginId) {
+        return userRepository.findUserByLoginId(loginId);
+    }
+
+    public ResponseEntity<?> deleteUser(Long id) {
+        try{
+            User findUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cannot find User By Id : " + id));
+            userRepository.delete(findUser);
+            return ResponseEntity.ok().build();
+        }catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     private void validateDuplicateLoginId(String loginId) {

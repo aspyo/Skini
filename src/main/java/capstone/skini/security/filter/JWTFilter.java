@@ -1,5 +1,6 @@
 package capstone.skini.security.filter;
 
+import capstone.skini.domain.user.entity.LoginType;
 import capstone.skini.domain.user.entity.User;
 import capstone.skini.security.dto.OAuth2UserDto;
 import capstone.skini.security.jwt.JWTUtil;
@@ -45,19 +46,25 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         String username = jwtUtil.getUsername(token);
+        String loginId = jwtUtil.getLoginId(token);
         String role = jwtUtil.getRole(token);
+        String loginType = jwtUtil.getLoginType(token);
 
         CustomPrincipal customPrincipal = null;
 
         if (jwtUtil.isOAuth2(token)) {
             OAuth2UserDto oAuth2UserDto = new OAuth2UserDto();
             oAuth2UserDto.setName(username);
+            oAuth2UserDto.setSocialId(loginId);
             oAuth2UserDto.setRole(role);
+            oAuth2UserDto.setLoginType(loginType);
             customPrincipal = new CustomOAuth2User(oAuth2UserDto);
         }else{
             User user = User.builder()
                     .username(username)
+                    .loginId(loginId)
                     .role(role)
+                    .loginType(LoginType.OUR)
                     .build();
             customPrincipal = new CustomUserDetails(user);
         }

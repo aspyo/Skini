@@ -19,13 +19,18 @@ public class CustomUserDetails implements CustomPrincipal{
     }
 
     @Override
+    public String getUsername() {
+        return user.getUsername();
+    }
+
+    @Override
     public String getPassword() {
         return user.getPassword();
     }
 
     @Override
-    public String getUsername() {
-        return user.getUsername();
+    public String getLoginId() {
+        return user.getLoginId();
     }
 
     @Override

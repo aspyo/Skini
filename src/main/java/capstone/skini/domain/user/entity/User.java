@@ -21,7 +21,7 @@ public class User extends BaseEntity {
     private String loginId;
     private String password;
     private String email;
-    private int age;
+    private Integer age;
     private String role;
 
     @Enumerated(value = EnumType.STRING)
@@ -30,7 +30,7 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
-    private String location;
+    private String address;
 
     protected User() {
 

@@ -27,7 +27,6 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     // OAuth2 컴포넌트
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -46,12 +45,14 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
                         .successHandler(customOAuth2SuccessHandler))
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint));
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
 
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/api/join", "/api/reissue").permitAll()
+                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
+                        .requestMatchers("/", "/error").permitAll()
+                        .requestMatchers("/api/login", "/api/join", "/api/reissue", "/api/oauth2token").permitAll()
                         .anyRequest().authenticated());
 
         http

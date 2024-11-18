@@ -1,6 +1,7 @@
 package capstone.skini.security.jwt;
 
 import capstone.skini.domain.user.entity.LoginType;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,11 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username",String.class);
     }
 
+    public String getLoginId(String token) {
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("loginId",String.class);
+    }
+
     public String getRole(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
@@ -33,22 +39,29 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category",String.class);
     }
 
+    public String getLoginType(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("loginType",String.class);
+    }
+
     public boolean isExpired(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
     }
 
     public boolean isOAuth2(String token) {
         String loginType = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("loginType", String.class);
         return loginType.equals("SOCIAL") ? true : false;
-
-
     }
 
-    public String createJwt(String category, String username, String role, LoginType loginType, Long expiredMs) {
+    public String createJwt(String category, String username, String loginId, String role, LoginType loginType, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category",category)
                 .claim("username", username)
+                .claim("loginId", loginId)
                 .claim("role", role)
                 .claim("loginType", loginType.name())
                 .issuedAt(new Date(System.currentTimeMillis()))

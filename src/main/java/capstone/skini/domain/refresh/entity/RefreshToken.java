@@ -18,7 +18,10 @@ public class RefreshToken extends BaseEntity {
     private Long id;
 
     private String username;
+
+    @Column(columnDefinition = "TEXT")
     private String refreshToken;
+
     private String expiration;
 
     protected RefreshToken() {

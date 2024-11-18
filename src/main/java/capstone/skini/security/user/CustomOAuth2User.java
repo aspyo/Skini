@@ -13,7 +13,8 @@ public class CustomOAuth2User implements CustomPrincipal{
 
     private final OAuth2UserDto oAuth2UserDto;
 
-    public String getSocialId() {
+    @Override
+    public String getLoginId() {
         return oAuth2UserDto.getSocialId();
     }
 
@@ -25,6 +26,10 @@ public class CustomOAuth2User implements CustomPrincipal{
     @Override
     public String getUsername() {
         return oAuth2UserDto.getName();
+    }
+
+    public String getLoginType() {
+        return oAuth2UserDto.getLoginType();
     }
 
     @Override

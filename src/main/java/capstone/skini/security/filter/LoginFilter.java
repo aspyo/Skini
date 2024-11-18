@@ -5,6 +5,7 @@ import capstone.skini.domain.refresh.repository.RefreshTokenRepository;
 import capstone.skini.domain.user.dto.LoginDto;
 import capstone.skini.domain.user.entity.LoginType;
 import capstone.skini.security.jwt.JWTUtil;
+import capstone.skini.security.user.CustomUserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -64,28 +65,22 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
+        CustomUserDetails userDetails = (CustomUserDetails) authResult.getPrincipal();
+        String loginId = userDetails.getLoginId();
+
         // JWT 토큰 생성(유효기간 = 1시간)
-        String jwt = jwtUtil.createJwt("access", username, role, LoginType.OUR, 1000 * 60 * 60L);
+        String jwt = jwtUtil.createJwt("access", username, loginId, role, LoginType.OUR, 1000 * 60 * 60L);
 
         // Refresh 토큰 생성(유효기간 = 7일)
-        String refresh = jwtUtil.createJwt("refresh", username, role, LoginType.OUR, 1000 * 60 * 60 * 24 * 7L);
+        String refresh = jwtUtil.createJwt("refresh", username, loginId, role, LoginType.OUR, 1000 * 60 * 60 * 24 * 7L);
 
         //Refresh 토큰 저장
         addRefreshToken(username,refresh,86400000L);
 
         //응답 설정
         response.setHeader("jwt", jwt);
-        response.addCookie(createCookie("refresh",refresh));
+        response.setHeader("refresh", refresh);
         response.setStatus(HttpStatus.OK.value());
-    }
-
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60 * 24 * 7);
-        cookie.setHttpOnly(true);
-
-        return cookie;
-
     }
 
     private void addRefreshToken(String username, String refresh, long expiredMs) {
