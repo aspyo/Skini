@@ -35,12 +35,13 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         String username = oAuth2User.getName();
+        String loginId = oAuth2User.getLoginId();
 
         Iterator<? extends GrantedAuthority> iterator = authentication.getAuthorities().iterator();
         String role = iterator.next().getAuthority();
 
         // Refresh 토큰 생성(유효기간 = 7일)
-        String refresh = jwtUtil.createJwt("refresh", username, role, LoginType.SOCIAL, 1000 * 60 * 60 * 24 * 7L);
+        String refresh = jwtUtil.createJwt("refresh", username, loginId, role, LoginType.SOCIAL, 1000 * 60 * 60 * 24 * 7L);
 
         //응답 설정
         response.addCookie(createCookie("refresh", refresh));

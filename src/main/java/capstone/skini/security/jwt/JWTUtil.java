@@ -24,6 +24,11 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username",String.class);
     }
 
+    public String getLoginId(String token) {
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("loginId",String.class);
+    }
+
     public String getRole(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
@@ -46,11 +51,12 @@ public class JWTUtil {
         return loginType.equals("SOCIAL") ? true : false;
     }
 
-    public String createJwt(String category, String username, String role, LoginType loginType, Long expiredMs) {
+    public String createJwt(String category, String username, String loginId, String role, LoginType loginType, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category",category)
                 .claim("username", username)
+                .claim("loginId", loginId)
                 .claim("role", role)
                 .claim("loginType", loginType.name())
                 .issuedAt(new Date(System.currentTimeMillis()))

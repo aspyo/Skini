@@ -50,7 +50,7 @@ public class RefreshTokenController {
             loginType = LoginType.OUR;
         }
 
-        String newJWT = jwtUtil.createJwt("access", jwtUtil.getUsername(refresh), jwtUtil.getRole(refresh), loginType, 1000 * 60 * 60L);
+        String newJWT = jwtUtil.createJwt("access", jwtUtil.getUsername(refresh), jwtUtil.getLoginId(refresh), jwtUtil.getRole(refresh), loginType, 1000 * 60 * 60L);
         response.setHeader("jwt", newJWT);
         return ResponseEntity.ok(null);
 
@@ -78,12 +78,13 @@ public class RefreshTokenController {
 
         String username = jwtUtil.getUsername(refresh);
         String role = jwtUtil.getRole(refresh);
+        String loginId = jwtUtil.getLoginId(refresh);
 
         // JWT 토큰 생성(유효기간 = 1시간)
-        String jwt = jwtUtil.createJwt("access", username, role, LoginType.SOCIAL, 1000 * 60 * 60L);
+        String jwt = jwtUtil.createJwt("access", username, loginId, role, LoginType.SOCIAL, 1000 * 60 * 60L);
 
         // Refresh 토큰 생성(유효기간 = 7일)
-        String refreshToken = jwtUtil.createJwt("refresh", username, role, LoginType.SOCIAL, 1000 * 60 * 60 * 24 * 7L);
+        String refreshToken = jwtUtil.createJwt("refresh", loginId, username, role, LoginType.SOCIAL, 1000 * 60 * 60 * 24 * 7L);
 
         //Refresh 토큰 저장
         addRefreshToken(username,refreshToken,86400000L);
@@ -99,6 +100,9 @@ public class RefreshTokenController {
         //토큰 발급 및 응답 설정
         response.setHeader("jwt", jwt);
         response.setHeader("refresh", refreshToken);
+
+        System.out.println("jwt = " + jwt);
+        System.out.println("refreshToken = " + refreshToken);
 
         return ResponseEntity.ok("소셜로그인에서 토큰발급 성공");
     }
