@@ -17,4 +17,5 @@ class MailServiceTest {
     void 이메일전송() throws Exception {
         mailService.sendMail("sungpyo8334@naver.com");
     }
+
 }
