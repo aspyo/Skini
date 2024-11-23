@@ -3,11 +3,16 @@ package capstone.skini.domain.user.controller;
 import capstone.skini.domain.refresh.service.RefreshTokenService;
 import capstone.skini.domain.user.dto.EditUserDto;
 import capstone.skini.domain.user.dto.JoinDto;
+import capstone.skini.domain.user.dto.UserDto;
 import capstone.skini.domain.user.entity.User;
 import capstone.skini.domain.user.service.UserService;
 import capstone.skini.security.jwt.JWTUtil;
 import capstone.skini.security.user.CustomPrincipal;
-import jakarta.servlet.http.Cookie;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +70,10 @@ public class UserController {
     /**
      * 유저 정보 조회
      */
+    @Operation(summary = "유저정보 조회", description = "유저정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "유저정보 조회 성공", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))})
+    })
     @GetMapping("/user")
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomPrincipal principal) {
         User user = userService.findByLoginId(principal.getLoginId());
