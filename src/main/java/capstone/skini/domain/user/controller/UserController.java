@@ -6,11 +6,14 @@ import capstone.skini.domain.user.dto.JoinDto;
 import capstone.skini.domain.user.entity.User;
 import capstone.skini.domain.user.service.UserService;
 import capstone.skini.security.jwt.JWTUtil;
+import capstone.skini.security.user.CustomPrincipal;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,8 +30,7 @@ public class UserController {
      */
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinDto joinDto) {
-        userService.join(joinDto);
-        return ResponseEntity.ok(null);
+        return userService.join(joinDto);
     }
 
     /**
@@ -63,25 +65,33 @@ public class UserController {
     /**
      * 유저 정보 조회
      */
-    @GetMapping("/user/{user_id}")
-    public ResponseEntity<?> getUserInfo(@PathVariable("user_id") Long userId) {
-        return userService.findById(userId);
+    @GetMapping("/user")
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomPrincipal principal) {
+        User user = userService.findByLoginId(principal.getLoginId());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cannot find User By LoginId : " + principal.getLoginId());
+        }
+        return userService.findById(user.getId());
     }
 
     /**
      * 유저 정보 수정
-     * 메일 인증 과정 구현후 추가해야함!!
      */
-//    @PostMapping("/user/{user_id}")
-//    public ResponseEntity<?> editUserInfo(@PathVariable("user_id") Long userId, @RequestBody EditUserDto editUserDto) {
-//
-//    }
+    @PatchMapping("/user")
+    public ResponseEntity<?> editUserInfo(@AuthenticationPrincipal CustomPrincipal principal,
+                                          @RequestBody EditUserDto editUserDto) {
+        return userService.editUser(principal.getLoginId(), editUserDto);
+    }
 
     /**
      * 회원 탈퇴
      */
-    @DeleteMapping("/user/{user_id}")
-    public ResponseEntity<?> deleteUser(@PathVariable("user_id") Long userId) {
-        return userService.deleteUser(userId);
+    @DeleteMapping("/user")
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal CustomPrincipal principal) {
+        User user = userService.findByLoginId(principal.getLoginId());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cannot find User By LoginId : " + principal.getLoginId());
+        }
+        return userService.deleteUser(user);
     }
 }
