@@ -1,23 +1,23 @@
 package capstone.skini.domain.post.controller;
 
-import capstone.skini.domain.favorite_hospital.dto.HospitalDto;
+import capstone.skini.domain.post.dto.ResponsePagingPostDto;
 import capstone.skini.domain.post.dto.RequestEditPostDto;
 import capstone.skini.domain.post.dto.RequestPostDto;
 import capstone.skini.domain.post.dto.ResponsePostDto;
 import capstone.skini.domain.post.entity.Post;
+import capstone.skini.domain.post.entity.PostType;
 import capstone.skini.domain.post.service.PostService;
-import capstone.skini.domain.user.dto.UserDto;
 import capstone.skini.domain.user.entity.User;
 import capstone.skini.domain.user.service.UserService;
 import capstone.skini.security.user.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -54,7 +54,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 조회
+     * 특정 게시글 조회
      */
     @GetMapping("/post/{post_id}")
     @Operation(summary = "커뮤니티 게시글 조회", description = "커뮤니티 게시글을 조회합니다.")
@@ -69,6 +69,16 @@ public class PostController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+
+    /**
+     * 게시글 종류별 페이징 조회
+     */
+    @GetMapping("/posts")
+    public ResponseEntity<?> pagingPosts(@RequestParam("postType") PostType postType,
+                                         @RequestParam(value = "page", defaultValue = "1") int page) {
+        Page<Post> posts = postService.findPostsByPostType(postType, page);
+        return ResponseEntity.ok(new ResponsePagingPostDto(posts.getTotalPages(), posts.getContent()));
     }
 
     /**

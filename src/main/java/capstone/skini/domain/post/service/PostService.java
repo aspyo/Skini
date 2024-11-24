@@ -2,9 +2,14 @@ package capstone.skini.domain.post.service;
 
 import capstone.skini.domain.post.dto.RequestEditPostDto;
 import capstone.skini.domain.post.entity.Post;
+import capstone.skini.domain.post.entity.PostType;
 import capstone.skini.domain.post.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,5 +51,10 @@ public class PostService {
         }
         post.edit(requestEditPostDto.getTitle(), requestEditPostDto.getContent());
         return post;
+    }
+
+    public Page<Post> findPostsByPostType(PostType postType, int page) {
+        PageRequest pageRequest = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return postRepository.findAllByPostType(postType, pageRequest);
     }
 }
