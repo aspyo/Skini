@@ -24,7 +24,7 @@ public class Post extends BaseEntity {
     private String title;
     private String content;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private PostType postType;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,5 +36,10 @@ public class Post extends BaseEntity {
 
     protected Post() {
 
+    }
+
+    public void edit(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 }
