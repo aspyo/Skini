@@ -24,6 +24,9 @@ public class FavoriteHospitalController {
 
     private final FavoriteHospitalService favoriteHospitalService;
 
+    /**
+     * 즐겨찾기 병원 조회
+     */
     @GetMapping("/favorites/hospital")
     @Operation(summary = "즐겨찾기 병원 조회", description = "즐겨찾기 병원을 조회합니다.")
     @ApiResponses(value = {
@@ -36,6 +39,9 @@ public class FavoriteHospitalController {
         return favoriteHospitalService.findFavorites(loginId);
     }
 
+    /**
+     * 즐겨찾기 병원 추가
+     */
     @PostMapping("/favorites/hospital")
     public ResponseEntity<?> addFavoritesHospital(@AuthenticationPrincipal CustomPrincipal principal,
                                                   @RequestBody HospitalDto hospitalDto) {
@@ -43,9 +49,14 @@ public class FavoriteHospitalController {
         return favoriteHospitalService.addFavorites(hospitalDto, loginId);
     }
 
+    /**
+     * 즐겨찾기 병원 삭제
+     */
     @DeleteMapping("/favorites/hospital/{id}")
-    public ResponseEntity<?> deleteFavoritesHospital(@PathVariable("id") Long id) {
-        return favoriteHospitalService.deleteFavorites(id);
+    public ResponseEntity<?> deleteFavoritesHospital(@AuthenticationPrincipal CustomPrincipal principal,
+                                                     @PathVariable("id") Long id) {
+        String loginId = principal.getLoginId();
+        return favoriteHospitalService.deleteFavorites(id, loginId);
     }
 
 }

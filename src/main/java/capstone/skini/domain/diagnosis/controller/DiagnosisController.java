@@ -22,6 +22,9 @@ public class DiagnosisController {
 
     private final DiagnosisService diagnosisService;
 
+    /**
+     * 진단기록 조회
+     */
     @GetMapping("/diagnosis")
     @Operation(summary = "진단기록 조회", description = "진단기록을 조회합니다.")
     @ApiResponses(value = {
@@ -34,8 +37,13 @@ public class DiagnosisController {
         return diagnosisService.findDiagnosis(loginId);
     }
 
+    /**
+     * 진단기록 삭제
+     */
     @DeleteMapping("/diagnosis/{id}")
-    public ResponseEntity<?> deleteDiagnosis(@PathVariable("id") Long id) {
-        return diagnosisService.deleteDiagnosis(id);
+    public ResponseEntity<?> deleteDiagnosis(@AuthenticationPrincipal CustomPrincipal principal,
+                                             @PathVariable("id") Long id) {
+        String loginId = principal.getLoginId();
+        return diagnosisService.deleteDiagnosis(id, loginId);
     }
 }

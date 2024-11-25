@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 public class UserDto {
 
+    private Long id;
     private String username;
     private String loginId;
     private String email;
@@ -19,6 +20,7 @@ public class UserDto {
     private String address;
 
     public UserDto(User user) {
+        id = user.getId();
         username = user.getUsername();
         loginId = user.getLoginId();
         email = user.getEmail();

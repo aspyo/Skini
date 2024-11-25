@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 @Data
 public class ResponsePostDto {
+    private Long id;
     private String title;
     private String content;
     private PostType postType;
@@ -22,6 +23,7 @@ public class ResponsePostDto {
     }
 
     public ResponsePostDto(Post post) {
+        id = post.getId();
         title = post.getTitle();
         content = post.getContent();
         postType = post.getPostType();

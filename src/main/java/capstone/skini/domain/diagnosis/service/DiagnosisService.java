@@ -48,9 +48,16 @@ public class DiagnosisService {
         return ResponseEntity.ok(diagnosisDtos);
     }
 
-    public ResponseEntity<?> deleteDiagnosis(Long id) {
+    public ResponseEntity<?> deleteDiagnosis(Long id, String loginId) {
         try {
+            User findUser = userService.findByLoginId(loginId);
+            if (findUser == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cannot find User By loginId : " + loginId);
+            }
             Diagnosis diagnosis = diagnosisRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cannot find Diagnosis By Id: " + id));
+            if (diagnosis.getUser().getId() != findUser.getId()) {
+                return ResponseEntity.badRequest().body("진단기록의 유저 id와 현재 유저의 id가 다릅니다.");
+            }
             diagnosisRepository.delete(diagnosis);
             return ResponseEntity.ok().build();
         } catch (EntityNotFoundException e) {

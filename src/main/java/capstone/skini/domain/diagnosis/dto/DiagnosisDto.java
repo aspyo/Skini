@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class DiagnosisDto {
+    private Long id;
     private String username;
     private DiagnosisType diagnosisType;
     private String result;
     private Integer confidenceScore;
 
     public DiagnosisDto(Diagnosis diagnosis) {
+        id = diagnosis.getId();
         username = diagnosis.getUser().getUsername();
         diagnosisType = diagnosis.getDiagnosisType();
         result = diagnosis.getResult();

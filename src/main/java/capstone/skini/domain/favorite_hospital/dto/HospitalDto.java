@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class HospitalDto {
+    private Long id;
     private String hospitalName;
     private String address;
     private Double latitude;
@@ -14,6 +15,7 @@ public class HospitalDto {
     private String phoneNumber;
 
     public HospitalDto(FavoriteHospital favoriteHospital) {
+        id = favoriteHospital.getId();
         hospitalName = favoriteHospital.getHospitalName();
         address = favoriteHospital.getAddress();
         latitude = favoriteHospital.getLatitude();
