@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class DiagnosisController {
     /**
      * 피부 진단
      */
-    @PostMapping("/diagnosis")
+    @PostMapping(value = "/diagnosis", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> doDiagnosis(@AuthenticationPrincipal CustomPrincipal principal,
                                          @RequestParam("type") DiagnosisType diagnosisType,
                                          @RequestParam("file") MultipartFile file) {

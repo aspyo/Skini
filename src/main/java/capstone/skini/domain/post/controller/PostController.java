@@ -1,5 +1,6 @@
 package capstone.skini.domain.post.controller;
 
+import capstone.skini.domain.favorite_hospital.dto.HospitalDto;
 import capstone.skini.domain.post.dto.ResponsePagingPostDto;
 import capstone.skini.domain.post.dto.RequestEditPostDto;
 import capstone.skini.domain.post.dto.RequestPostDto;
@@ -11,6 +12,7 @@ import capstone.skini.domain.user.entity.User;
 import capstone.skini.domain.user.service.UserService;
 import capstone.skini.security.user.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -75,6 +77,12 @@ public class PostController {
      * 게시글 종류별 페이징 조회
      */
     @GetMapping("/posts")
+    @Operation(summary = "게시글 종류별 페이징 조회", description = "게시글 종류별로 게시글을 페이지네이션하여 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "게시글 페이지네이션 조회 성공",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ResponsePagingPostDto.class)))})
+    })
     public ResponseEntity<?> pagingPosts(@RequestParam("postType") PostType postType,
                                          @RequestParam(value = "page", defaultValue = "1") int page) {
         Page<Post> posts = postService.findPostsByPostType(postType, page);

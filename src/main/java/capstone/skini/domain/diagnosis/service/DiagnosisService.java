@@ -83,12 +83,6 @@ public class DiagnosisService {
 
             ResponseEntity<Map> response = requestFastApi(file, fastApiUrl);
             Map<String, Object> responseBody = response.getBody();
-            String type = (String) responseBody.get("종류");
-            if (diagnosisType == DiagnosisType.CANCER) {
-                String isPositive = (String) responseBody.get("암여부");
-            } else if (diagnosisType == DiagnosisType.DISEASE) {
-                String isPositive = (String) responseBody.get("질병여부");
-            }
             String result = (String) responseBody.get("질병명");
             String confidenceScore = (String) responseBody.get("확률");
 
