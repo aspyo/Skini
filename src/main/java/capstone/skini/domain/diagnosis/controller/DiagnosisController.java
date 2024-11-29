@@ -1,8 +1,8 @@
 package capstone.skini.domain.diagnosis.controller;
 
 import capstone.skini.domain.diagnosis.dto.DiagnosisDto;
+import capstone.skini.domain.diagnosis.entity.DiagnosisType;
 import capstone.skini.domain.diagnosis.service.DiagnosisService;
-import capstone.skini.domain.favorite_hospital.dto.HospitalDto;
 import capstone.skini.security.user.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -21,6 +22,20 @@ import org.springframework.web.bind.annotation.*;
 public class DiagnosisController {
 
     private final DiagnosisService diagnosisService;
+
+    /**
+     * 피부 진단
+     */
+    @PostMapping("/diagnosis")
+    public ResponseEntity<?> doDiagnosis(@AuthenticationPrincipal CustomPrincipal principal,
+                                         @RequestParam("type") DiagnosisType diagnosisType,
+                                         @RequestParam("file") MultipartFile file) {
+        if (principal == null) {
+            return diagnosisService.diagnose(null, diagnosisType, file);
+        }else{
+            return diagnosisService.diagnose(principal.getLoginId(), diagnosisType, file);
+        }
+    }
 
     /**
      * 진단기록 조회
@@ -46,4 +61,5 @@ public class DiagnosisController {
         String loginId = principal.getLoginId();
         return diagnosisService.deleteDiagnosis(id, loginId);
     }
+
 }

@@ -56,6 +56,8 @@ public class SecurityConfig {
                         .requestMatchers("/", "/error").permitAll()
                         .requestMatchers("/api/login", "/api/join", "/api/reissue", "/api/oauth2token").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/post/**", "/api/posts").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/diagnosis_info").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/diagnosis").permitAll()
                         .anyRequest().authenticated());
 
         http

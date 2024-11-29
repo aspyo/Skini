@@ -12,7 +12,7 @@ public class DiagnosisDto {
     private String username;
     private DiagnosisType diagnosisType;
     private String result;
-    private Integer confidenceScore;
+    private String confidenceScore;
 
     public DiagnosisDto(Diagnosis diagnosis) {
         id = diagnosis.getId();
