@@ -1,13 +1,16 @@
 package capstone.skini.domain.diagnosis.service;
 
+import capstone.skini.aws.service.AwsS3Service;
 import capstone.skini.domain.diagnosis.dto.DiagnosisDto;
 import capstone.skini.domain.diagnosis.entity.Diagnosis;
 import capstone.skini.domain.diagnosis.entity.DiagnosisType;
 import capstone.skini.domain.diagnosis.repository.DiagnosisRepository;
 import capstone.skini.domain.user.entity.User;
 import capstone.skini.domain.user.service.UserService;
+import com.amazonaws.services.s3.AmazonS3Client;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,7 @@ public class DiagnosisService {
     private final DiagnosisRepository diagnosisRepository;
     private final UserService userService;
     private final RestTemplate restTemplate;
+    private final AwsS3Service awsS3Service;
 
     @Transactional(readOnly = true)
     public Diagnosis findById(Long id) {
@@ -86,17 +90,20 @@ public class DiagnosisService {
             String result = (String) responseBody.get("질병명");
             String confidenceScore = (String) responseBody.get("확률");
 
-
             // 유저가 로그인했을경우에만 진단기록 저장
             if (loginId != null) {
                 User findUser = userService.findByLoginId(loginId);
                 if (findUser == null) {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cannot find User By loginId : " + loginId);
                 }
+                //AWS S3에 이미지 업로드
+                String imageUrl = awsS3Service.upload(file, diagnosisType.toString());
+
                 Diagnosis newDiagnosis = Diagnosis.builder()
                         .diagnosisType(diagnosisType)
                         .result(result)
                         .confidenceScore(confidenceScore)
+                        .imageUrl(imageUrl)
                         .user(findUser)
                         .build();
                 diagnosisRepository.save(newDiagnosis);

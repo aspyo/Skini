@@ -13,6 +13,7 @@ public class DiagnosisDto {
     private DiagnosisType diagnosisType;
     private String result;
     private String confidenceScore;
+    private String imageUrl;
 
     public DiagnosisDto(Diagnosis diagnosis) {
         id = diagnosis.getId();
@@ -20,5 +21,6 @@ public class DiagnosisDto {
         diagnosisType = diagnosis.getDiagnosisType();
         result = diagnosis.getResult();
         confidenceScore = diagnosis.getConfidenceScore();
+        imageUrl = diagnosis.getImageUrl();
     }
 }

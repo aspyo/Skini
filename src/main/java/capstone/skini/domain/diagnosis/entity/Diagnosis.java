@@ -23,6 +23,7 @@ public class Diagnosis extends BaseEntity {
 
     private String result;
     private String confidenceScore;
+    private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
