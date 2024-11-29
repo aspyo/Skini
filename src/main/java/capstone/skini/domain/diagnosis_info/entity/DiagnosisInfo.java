@@ -14,11 +14,14 @@ public class DiagnosisInfo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "diagnosis_info")
+    @Column(name = "diagnosis_info_id")
     private Long id;
 
-    private String diagnosisResult;
+    private String engName;
+    private String korName;
+    @Column(columnDefinition = "TEXT")
     private String description;
+    @Column(columnDefinition = "TEXT")
     private String guideline;
 
     protected DiagnosisInfo() {
