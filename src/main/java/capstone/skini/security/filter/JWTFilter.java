@@ -35,13 +35,17 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if (jwtUtil.isExpired(token)) {
             System.out.println("토큰이 만료되었습니다.");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("토큰이 만료되었습니다.");
             return;
         }
 
         if (!jwtUtil.getCategory(token).equals("access")) {
             System.out.println("토큰의 카테고리가 access 가 아닙니다.");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "잘못된 토큰의 카테고리입니다.");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("토큰의 카테고리가 access 가 아닙니다.");
             return;
         }
 

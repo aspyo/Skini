@@ -13,7 +13,9 @@ import java.io.IOException;
 public class CustomOAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("OAuth2 로그인에 실패하였습니다.");
         System.out.println("OAuth2 로그인에 실패하였습니다.");
     }
 }
