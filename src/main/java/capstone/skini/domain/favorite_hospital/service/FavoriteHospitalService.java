@@ -52,9 +52,16 @@ public class FavoriteHospitalService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> deleteFavorites(Long id) {
+    public ResponseEntity<?> deleteFavorites(Long favoritesId, String loginId) {
         try {
-            FavoriteHospital favoriteHospital = favoriteHospitalRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cannot find FavoriteHospital By Id : " + id));
+            User findUser = userService.findByLoginId(loginId);
+            if (findUser == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cannot find User By loginId : " + loginId);
+            }
+            FavoriteHospital favoriteHospital = favoriteHospitalRepository.findById(favoritesId).orElseThrow(() -> new EntityNotFoundException("cannot find FavoriteHospital By Id : " + favoritesId));
+            if (favoriteHospital.getUser().getId() != findUser.getId()) {
+                return ResponseEntity.badRequest().body("즐겨찾기 병원의 유저 id와 현재 유저의 id가 다릅니다.");
+            }
             favoriteHospitalRepository.delete(favoriteHospital);
             return ResponseEntity.ok().build();
         } catch (EntityNotFoundException e) {

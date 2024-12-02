@@ -97,7 +97,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage());
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("OAuth2 로그인에 실패하였습니다.");
         System.out.println("자체 로그인에 실패하였습니다.");
     }
 

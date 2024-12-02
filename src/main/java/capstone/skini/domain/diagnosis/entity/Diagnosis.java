@@ -22,7 +22,8 @@ public class Diagnosis extends BaseEntity {
     private DiagnosisType diagnosisType;
 
     private String result;
-    private Integer confidenceScore;
+    private String confidenceScore;
+    private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

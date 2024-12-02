@@ -1,5 +1,6 @@
 package capstone.skini.domain.user.service;
 
+import capstone.skini.domain.user.dto.EditUserDto;
 import capstone.skini.domain.user.dto.JoinDto;
 import capstone.skini.domain.user.dto.UserDto;
 import capstone.skini.domain.user.entity.LoginType;
@@ -28,29 +29,32 @@ public class UserService {
      * 회원가입
      */
     @Transactional
-    public User join(JoinDto joinDto) {
+    public ResponseEntity<?> join(JoinDto joinDto) {
+        try {
+            // 아이디 중복 검증
+            validateDuplicateLoginId(joinDto.getLoginId());
 
-        // 아이디 중복 검증
-        validateDuplicateLoginId(joinDto.getLoginId());
+            // 비밀번호 중복 검증
+            validateDuplicatePassword(joinDto.getPassword());
 
-        // 비밀번호 중복 검증
-        validateDuplicatePassword(joinDto.getPassword());
+            // 중복 검증 통과
+            User newUser = User.builder()
+                    .username(joinDto.getUsername())
+                    .loginId(joinDto.getLoginId())
+                    .password(bCryptPasswordEncoder.encode(joinDto.getPassword()))
+                    .age(joinDto.getAge())
+                    .email(joinDto.getEmail())
+                    .gender(joinDto.getGender())
+                    .role("ROLE_USER")
+                    .loginType(LoginType.OUR)
+                    .build();
+            User savedUser = userRepository.save(newUser);
 
-        // 중복 검증 통과
-        User newUser = User.builder()
-                .username(joinDto.getUsername())
-                .loginId(joinDto.getLoginId())
-                .password(bCryptPasswordEncoder.encode(joinDto.getPassword()))
-                .age(joinDto.getAge())
-                .email(joinDto.getEmail())
-                .gender(joinDto.getGender())
-                .role("ROLE_USER")
-                .loginType(LoginType.OUR)
-                .build();
+            return ResponseEntity.ok().build();
+        } catch (EntityExistsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
-        User savedUser = userRepository.save(newUser);
-
-        return savedUser;
     }
 
     public Optional<User> findByUsername(String username) {
@@ -72,13 +76,25 @@ public class UserService {
         return userRepository.findUserByLoginId(loginId);
     }
 
-    public ResponseEntity<?> deleteUser(Long id) {
-        try{
-            User findUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("cannot find User By Id : " + id));
-            userRepository.delete(findUser);
+    public ResponseEntity<?> editUser(String loginId, EditUserDto editUserDto) {
+        try {
+            User findUser = userRepository.findUserByLoginId(loginId);
+            if (findUser == null) {
+                throw new EntityNotFoundException("cannot find User By LoginId : " + loginId);
+            }
+            findUser.changeInfo(editUserDto);
             return ResponseEntity.ok().build();
-        }catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> deleteUser(User user) {
+        try{
+            userRepository.delete(user);
+            return ResponseEntity.ok().build();
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

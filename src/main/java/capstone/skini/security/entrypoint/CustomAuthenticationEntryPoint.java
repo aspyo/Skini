@@ -20,6 +20,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write("no login!!!");
+        response.getWriter().write("로그인이 필요합니다!!");
     }
 }
