@@ -3,26 +3,24 @@ package capstone.skini.domain.diagnosis.dto;
 import capstone.skini.domain.diagnosis.entity.Diagnosis;
 import capstone.skini.domain.diagnosis.entity.DiagnosisType;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-public class DiagnosisDto {
+public class DiagnosisFastApiDto {
     private Long id;
-    private String username;
     private DiagnosisType diagnosisType;
     private Boolean isPositive;
-    private String result;
     private String confidenceScore;
-    private String imageUrl;
+    private String diseaseName;
+    private LocalDateTime createdAt;
 
-    public DiagnosisDto(Diagnosis diagnosis) {
+    public DiagnosisFastApiDto(Diagnosis diagnosis) {
         id = diagnosis.getId();
-        username = diagnosis.getUser().getUsername();
         diagnosisType = diagnosis.getDiagnosisType();
         isPositive = diagnosis.getIsPositive();
-        result = diagnosis.getResult();
         confidenceScore = diagnosis.getConfidenceScore();
-        imageUrl = diagnosis.getImageUrl();
+        diseaseName = diagnosis.getResult();
+        createdAt = diagnosis.getCreatedAt();
     }
 }
