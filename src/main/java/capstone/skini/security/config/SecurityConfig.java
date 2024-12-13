@@ -61,6 +61,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/login", "/api/join", "/api/reissue", "/api/oauth2token").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/post/**", "/api/posts").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/diagnosis_info").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/diagnosis/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/diagnosis").permitAll()
                         .anyRequest().authenticated());
 
@@ -79,9 +80,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // 프론트 도메인 배포후에 수정 필요!!
-        configuration.addAllowedOriginPattern("*");
-//        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOrigin("https://ski-ni.site");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
