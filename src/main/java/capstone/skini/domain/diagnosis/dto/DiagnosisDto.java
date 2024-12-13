@@ -18,7 +18,11 @@ public class DiagnosisDto {
 
     public DiagnosisDto(Diagnosis diagnosis) {
         id = diagnosis.getId();
-        username = diagnosis.getUser().getUsername();
+        if (diagnosis.getUser() == null) {
+            username = null;
+        } else {
+            username = diagnosis.getUser().getUsername();
+        }
         diagnosisType = diagnosis.getDiagnosisType();
         isPositive = diagnosis.getIsPositive();
         result = diagnosis.getResult();
