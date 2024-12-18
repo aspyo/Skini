@@ -36,7 +36,9 @@ JWT토큰은 서버에 별도로 저장하지않고 유효기간만 설정후 �
 - **백엔드** : Spring Framework, Spring Security, JPA (Java Persistence API)
 - **프론트엔드** : React Framework
 - **AI/딥러닝 (데이터 사이언스)** : TensorFlow, PyTorch
-- **데이터베이스**: mysql
+- **데이터베이스**: mysql, redis
+- **배포** : Docker, AWS EC2
+- **스토리지** : AWS S3
 
 ## 시스템 아키텍처
 ![image](https://github.com/user-attachments/assets/c204b0b0-1eab-4219-9df5-7c0dda4badbd)
