@@ -46,5 +46,8 @@ JWT토큰은 서버에 별도로 저장하지않고 유효기간만 설정후 �
 - 이메일 인증과정에서 인메모리 DB인 Redis 를 사용하였으며 EC2 인스턴스에서 Redis 서버 설치 후 사용
 - mysql DB는 AWS RDS를 사용하지 않고 간단하게 EC2 인스턴스에 mysql 서버 설치 후 DB 생성하여 사용
 
+## 작성한 최종 발표자료, 보고서, 논문
+- 구글드라이브 링크 : https://drive.google.com/drive/folders/1jyiCHtPwudvTC7w3Rgbm59yhHUHQrLW_?usp=drive_link
+
 ## 해당 프로젝트는 팀프로젝트이며 필자는 백엔드 역할을 담당. 프론트엔드와 AI/딥러닝 코드는 해당 역할을 맡은 팀원이 수행함
 
