@@ -2,6 +2,7 @@ package capstone.skini.domain.diagnosis.service;
 
 import capstone.skini.aws.service.AwsS3Service;
 import capstone.skini.domain.diagnosis.dto.DiagnosisDto;
+import capstone.skini.domain.diagnosis.dto.DiagnosisFastApiDto;
 import capstone.skini.domain.diagnosis.entity.Diagnosis;
 import capstone.skini.domain.diagnosis.entity.DiagnosisType;
 import capstone.skini.domain.diagnosis.repository.DiagnosisRepository;
@@ -77,40 +78,46 @@ public class DiagnosisService {
     public ResponseEntity<?> diagnose(String loginId, DiagnosisType diagnosisType, MultipartFile file) {
         try {
             String fastApiUrl;
+            String cancerOrDisease;
             if (diagnosisType == DiagnosisType.DISEASE) {
                 fastApiUrl = "http://13.125.74.150:8080/predict";
+                cancerOrDisease = "질병여부";
             } else if (diagnosisType == DiagnosisType.CANCER) {
                 fastApiUrl = "http://13.125.74.150:8081/predict";
+                cancerOrDisease = "암여부";
             } else {
                 return ResponseEntity.badRequest().body("잘못된 진단타입입니다 : " + diagnosisType);
             }
 
             ResponseEntity<Map> response = requestFastApi(file, fastApiUrl);
             Map<String, Object> responseBody = response.getBody();
+            boolean isPositive = (boolean) responseBody.get(cancerOrDisease);
             String result = (String) responseBody.get("질병명");
             String confidenceScore = (String) responseBody.get("확률");
 
-            // 유저가 로그인했을경우에만 진단기록 저장
+            User findUser = null;
             if (loginId != null) {
-                User findUser = userService.findByLoginId(loginId);
+                findUser = userService.findByLoginId(loginId);
                 if (findUser == null) {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cannot find User By loginId : " + loginId);
                 }
-                //AWS S3에 이미지 업로드
-                String imageUrl = awsS3Service.upload(file, diagnosisType.toString());
-
-                Diagnosis newDiagnosis = Diagnosis.builder()
-                        .diagnosisType(diagnosisType)
-                        .result(result)
-                        .confidenceScore(confidenceScore)
-                        .imageUrl(imageUrl)
-                        .user(findUser)
-                        .build();
-                diagnosisRepository.save(newDiagnosis);
             }
+            //AWS S3에 이미지 업로드
+            String imageUrl = awsS3Service.upload(file, diagnosisType.toString());
+
+            Diagnosis newDiagnosis = Diagnosis.builder()
+                    .diagnosisType(diagnosisType)
+                    .isPositive(isPositive)
+                    .result(result)
+                    .confidenceScore(confidenceScore)
+                    .imageUrl(imageUrl)
+                    .user(findUser)
+                    .build();
+            Diagnosis savedDiagnosis = diagnosisRepository.save(newDiagnosis);
 
             // 클라이언트에 FAST API 응답 반환
-            return ResponseEntity.ok(response.getBody());
+            return ResponseEntity.ok(new DiagnosisFastApiDto(savedDiagnosis));
+
         } catch (RestClientException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("FAST api 서버와의 통신에 문제가 발생하였습니다.");

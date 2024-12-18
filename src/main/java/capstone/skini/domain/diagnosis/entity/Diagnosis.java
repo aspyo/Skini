@@ -21,6 +21,7 @@ public class Diagnosis extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DiagnosisType diagnosisType;
 
+    private Boolean isPositive;
     private String result;
     private String confidenceScore;
     private String imageUrl;
